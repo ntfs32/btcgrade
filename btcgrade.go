@@ -1,73 +1,34 @@
 package btcgrade
 
-type Url string
+import (
+	"github.com/ntfs32/btcgrade/utils"
+)
 
 type signature string
 
-// 基本配置
-//goole二次验证key（非动态密码，生成otp认证的密码）
-//api名称
-//私钥
+const (
+	API_VERSION = "2"
+)
+
 type Config struct {
-	GoogleAuthCode string
-	ApiName        string
-	PriviteKey     string
+	GOOGLE_AUTH_CODE string
+	ACCESS_KEY       string
+	SECRET_KEY       string
 }
 
 const (
-	BTC  Url = "btc"
-	ETH  Url = "eth"
-	LTC  Url = "ltc"
-	DOGE Url = "doge"
-	YBC  Url = "ybc"
+	BTC  string = "btc"
+	ETH  string = "eth"
+	LTC  string = "ltc"
+	DOGE string = "doge"
+	YBC  string = "ybc"
 )
 
 const (
-	// ----------------行情API-------------------------
-	//	获取行情 (GET)
-	QuotesUrl Url = "http://api.btctrade.com/api/ticker?coin=%s"
-
-	//	深度行情 (GET)
-	DepthQuotesUrl Url = "http://api.btctrade.com/api/depth?coin=%s"
-
-	//	成交记录 (GET)
-	OrderUrl Url = "http://api.btctrade.com/api/trades?coin=%s"
+	API_URL string = "http://api.btctrade.com/api"
 )
 
-const (
-	//	------------------------交易API-----------------------
-	//	获取账户信息 (POST)
-	AccountInfoUrl Url = "http://api.btctrade.com/api/balance/"
-
-	//	挂单查询 (POST): 指定时间后的挂单，可以根据类型查询，比如查看正在挂单和全部挂单
-
-	AccoutPauseOrderUrl Url = "http://api.btctrade.com/api/orders/"
-
-	//	查询订单信息 (POST)
-	AccountOrderUrl Url = "http://api.btctrade.com/api/fetch_order/"
-)
-const (
-	// -----------------	完整交易API------------------
-	//取消挂单 (POST)
-	CannelPauseOrderUrl Url = "http://api.btctrade.com/api/cancel_order/"
-
-	//	挂买单 (POST)
-	BuyOrderUrl Url = "http://api.btctrade.com/api/buy/"
-
-	//	挂卖单 (POST)
-	SellOrderUrl Url = "http://api.btctrade.com/api/sell/"
-)
-
-var QuotesResponseName map[string]string = map[string]string{
-	"high": "最高价",
-	"low":  "最低价",
-	"buy":  "买一价",
-	"sell": "卖一价",
-	"last": "最新成交价",
-	"vol":  "成交量(最近的24小时)",
-	"time": "返回数据时服务器时间",
-}
-
+// 行情api返回
 type QuotesResponse struct {
 	High float64 `json:"hogh"`
 	Low  float64 `json:"low"`
@@ -76,4 +37,75 @@ type QuotesResponse struct {
 	Last float64 `json:"last"`
 	Vol  string  `json:"vol"`
 	Time int64   `json:"time"`
+}
+
+// 公共订单数据
+type CommonOrdersResponse struct {
+	Date   string  `json:"date"`
+	Price  float64 `json:"price"`
+	Amount float64 `json:"amount"`
+	Tid    string  `json:"tid"`
+	Type   string  `josn:"type"`
+}
+
+func (obj *Config) SetAccess_key(key string) Config {
+	obj.ACCESS_KEY = key
+	return *obj
+}
+func (obj *Config) SetSecret_key(key string) Config {
+	obj.SECRET_KEY = key
+	return *obj
+}
+func (obj *Config) SetGoogleAuthCode(key string) Config {
+	obj.GOOGLE_AUTH_CODE = key
+	return *obj
+}
+
+func Ticker(coin string) string {
+	body, _ := utils.Get(API_URL + "/ticker?coin=" + coin)
+	return string(body)
+}
+
+func DepthTicker(coin string) string {
+	body, _ := utils.Get(API_URL + "/depth?coin=" + coin)
+	return string(body)
+}
+
+func CommonOrders(coin string) string {
+	body, _ := utils.Get(API_URL + "/trades?coin=" + coin)
+	return string(body)
+}
+
+func AccountInfo(config Config) string {
+	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, make(map[string]string, 0))
+	body, _ := utils.Post(API_URL+"/balance", params)
+	return string(body)
+}
+
+func AccountOrders(config Config, coin string, types string, since string, ob string) string {
+	//	postParams := &map[string]string{"coin": coin, "type": types, "since": since, "ob": ob}
+	postParams := make(map[string]string, 4)
+	postParams["coin"] = coin
+	postParams["type"] = types
+	postParams["since"] = since
+	postParams["ob"] = ob
+	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
+	body, _ := utils.Post(API_URL+"/orders", params)
+	return string(body)
+}
+
+func FetchOrder(config Config, orderId string) string {
+	postParams := make(map[string]string, 1)
+	postParams["id"] = orderId
+	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
+	body, _ := utils.Post(API_URL+"/fetch_order", params)
+	return string(body)
+}
+
+func CancelOrder(config Config, orderId string) string {
+	postParams := make(map[string]string, 1)
+	postParams["id"] = orderId
+	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
+	body, _ := utils.Post(API_URL+"/cancel_order", params)
+	return string(body)
 }
