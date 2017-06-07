@@ -76,36 +76,33 @@ func CommonOrders(coin string) string {
 	return string(body)
 }
 
-func AccountInfo(config Config) string {
-	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, make(map[string]string, 0))
-	body, _ := utils.Post(API_URL+"/balance", params)
+func PostAction(urls string, config Config, params map[string]string) string {
+	sign := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, params)
+	body, _ := utils.Post(API_URL+urls, sign)
 	return string(body)
 }
 
+func AccountInfo(config Config) string {
+	return PostAction("/balance", config, make(map[string]string, 0))
+}
+
 func AccountOrders(config Config, coin string, types string, since string, ob string) string {
-	//	postParams := &map[string]string{"coin": coin, "type": types, "since": since, "ob": ob}
 	postParams := make(map[string]string, 4)
 	postParams["coin"] = coin
 	postParams["type"] = types
 	postParams["since"] = since
 	postParams["ob"] = ob
-	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
-	body, _ := utils.Post(API_URL+"/orders", params)
-	return string(body)
+	return PostAction("/orders", config, postParams)
 }
 
 func FetchOrder(config Config, orderId string) string {
 	postParams := make(map[string]string, 1)
 	postParams["id"] = orderId
-	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
-	body, _ := utils.Post(API_URL+"/fetch_order", params)
-	return string(body)
+	return PostAction("/fetch_order", config, postParams)
 }
 
 func CancelOrder(config Config, orderId string) string {
 	postParams := make(map[string]string, 1)
 	postParams["id"] = orderId
-	params := utils.Signature(config.ACCESS_KEY, config.SECRET_KEY, config.GOOGLE_AUTH_CODE, postParams)
-	body, _ := utils.Post(API_URL+"/cancel_order", params)
-	return string(body)
+	return PostAction("/cancel_order", config, postParams)
 }
