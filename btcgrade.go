@@ -146,7 +146,7 @@ func Buy(config Config, coin string, amount int, price float64) string {
 //coin: 交易币种（btc,eth,ltc,doge,ybc）
 //amount: 购买数量
 //price: 购买价格
-func Sell(config, coin string, amount int, price float64) string {
+func Sell(config Config, coin string, amount int, price float64) string {
 	postParams := make(map[string]string, 3)
 	postParams["coin"] = coin
 	postParams["amount"] = strconv.Itoa(amount)
