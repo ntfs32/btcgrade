@@ -46,6 +46,7 @@ func Sha256(sourceString string, key string) string {
 
 }
 
+//  使用google auth code获取验证码
 func GetGoogleAuthCode(secret string) (string, error) {
 
 	code, err := totp.GenerateCode(secret, time.Now())
