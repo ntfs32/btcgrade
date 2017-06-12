@@ -39,6 +39,6 @@ func TestAccountInfo(t *testing.T) {
 	config.SetSecret_key(SECRET_KEY)
 	info := AccountInfo(config)
 	fmt.Println(info)
-	var testString string
+	var testString bool
 	require.IsType(t, info, testString, "获取账户的余额信息失败")
 }

@@ -6,8 +6,7 @@ import (
 	"github.com/ntfs32/btcgrade/utils"
 )
 
-type signature string
-
+// API 版本
 const (
 	API_VERSION = "2"
 )
