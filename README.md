@@ -1,6 +1,6 @@
 # btcgrade
 
-[![Circle CI](https://img.shields.io/circleci/btcgrade/codecov/codecov-bash.svg?branch=master)]
+[![Circle CI](https://img.shields.io/circleci/project/github/ntfs32/btcgrade.svg)]
 
 ## https://www.btctrade.com 站点api Golang
 
