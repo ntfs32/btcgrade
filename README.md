@@ -1,6 +1,6 @@
 # btcgrade
 
-[![Circle CI](https://img.shields.io/circleci/project/github/ntfs32/btcgrade.svg)]
+![Circle CI](https://img.shields.io/circleci/project/github/ntfs32/btcgrade.svg)  ![Github Tag](	https://img.shields.io/github/tag/ntfs32/btcgrade.svg)
 
 ## https://www.btctrade.com 站点api Golang
 
