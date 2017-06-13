@@ -16,4 +16,4 @@ test:
     - go test -v -race ./...
     
 after_success:
-  - bash <(curl -s https://codecov.io/bash) -t fdd49f38-20ee-4b38-91d1-2aca4ab664ce
+  - bash <(curl -s https://codecov.io/bash)
