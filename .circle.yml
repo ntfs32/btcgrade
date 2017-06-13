@@ -1,0 +1,19 @@
+# circle.yml
+machine:
+  go:
+    version: 1.8.1
+
+dependencies:
+  override:
+	- mkdir -p ~/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}
+	- ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_project/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+    # './...' is a relative pattern which means all subdirectories
+    - go get -t -d -v ./...
+    - go build -v
+   
+test:
+  override:
+    - go test -v -race ./...
+    
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -t fdd49f38-20ee-4b38-91d1-2aca4ab664ce
